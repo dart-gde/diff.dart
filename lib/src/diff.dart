@@ -173,6 +173,19 @@ void addHunk(diffSet h, Side side, List<diff3Set> hunks) {
 
 List<patch3Set> diff3_merge_indices(List<String> a, List<String> o, List<String>
     b) {
+  // Given three files, A, O, and B, where both A and B are
+  // independently derived from O, returns a fairly complicated
+  // internal representation of merge decisions it's taken. The
+  // interested reader may wish to consult
+  //
+  // Sanjeev Khanna, Keshav Kunal, and Benjamin C. Pierce. "A
+  // Formal Investigation of Diff3." In Arvind and Prasad,
+  // editors, Foundations of Software Technology and Theoretical
+  // Computer Science (FSTTCS), December 2007.
+  //
+  // (http://www.cis.upenn.edu/~bcpierce/papers/diff3-short.pdf)
+
+
   throw new UnimplementedError();
 }
 
@@ -207,6 +220,10 @@ bool isTrueConflict(patch3Set rec, List<String> a, List<String> b) {
 
 List<IMergeResultBlock> diff3_merge(List<String> a, List<String> o, List<String>
     b, bool excludeFalseConflicts) {
+  // Applies the output of Diff.diff3_merge_indices to actually
+  // construct the merged file; the returned result alternates
+  // between "ok" and "conflict" blocks.
+
   List<IMergeResultBlock> result = new List<IMergeResultBlock>();
   Map<Side, List<String>> files = new Map<Side, List<String>>();
   files[Side.Left] = a;
