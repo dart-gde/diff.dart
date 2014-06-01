@@ -351,7 +351,39 @@ List<String> patch(List<String> file, List<patchResult> patch) {
 }
 
 List<String> diff_merge_keepall(List<String> file1, List<String> file2) {
-  throw new UnimplementedError();
+  // Non-destructively merges two files.
+  //
+  // This is NOT a three-way merge - content will often be DUPLICATED by this process, eg
+  // when starting from the same file some content was moved around on one of the copies.
+  //
+  // To handle typical "common ancestor" situations and avoid incorrect duplication of
+  // content, use diff3_merge instead.
+  //
+  // This method's behaviour is similar to gnu diff's "if-then-else" (-D) format, but
+  // without the if/then/else lines!
+  //
+
+  List<String> result = new List<String>();
+  int file1CompletedToOffset = 0;
+  List<patchResult> diffPatches = diff_patch(file1, file2);
+
+  for (int chunkIndex = 0; chunkIndex < diffPatches.length; chunkIndex++) {
+    patchResult chunk = diffPatches[chunkIndex];
+    if (chunk.file2.Length > 0) {
+      //copy any not-yet-copied portion of file1 to the end of this patch entry
+      result.addAll(file1.getRange(file1CompletedToOffset, chunk.file1.Offset +
+                                       chunk.file1.Length).toList());
+      file1CompletedToOffset = chunk.file1.Offset + chunk.file1.Length;
+
+      // copy the file2 portion of this patch entry
+      result.addAll(chunk.file2.Chunk);
+    }
+  }
+
+  //copy any not-yet-copied portion of file1 to the end of the file
+  result.addAll(file1.getRange(file1CompletedToOffset, file1.length).toList());
+
+  return result;
 }
 
 List<diffSet> diff_indices(List<String> file1, List<String> file2) {
