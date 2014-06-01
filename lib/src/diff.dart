@@ -200,7 +200,56 @@ CandidateThing longest_common_subsequence(List<String> file1, List<String>
 //}
 
 List<commonOrDifferentThing> diff_comm(List<String> file1, List<String> file2) {
-  throw new UnimplementedError();
+  // We apply the LCS to build a "comm"-style picture of the
+  // differences between file1 and file2.
+
+  List<commonOrDifferentThing> result = new List<commonOrDifferentThing>();
+
+  int tail1 = file1.length;
+  int tail2 = file2.length;
+
+  commonOrDifferentThing common = new commonOrDifferentThing()
+    ..common = new List<String>();
+
+  void processCommon() {
+    if (common.common.length > 0) {
+      common.common = common.common.reversed.toList();
+      result.add(common);
+      common = new commonOrDifferentThing()
+        ..common = new List<String>();
+    }
+  }
+
+  for (CandidateThing candidate = longest_common_subsequence(file1, file2);
+      candidate != null;
+      candidate = candidate.chain) {
+    commonOrDifferentThing different = new commonOrDifferentThing()
+      ..file1 = new List<String>()
+      ..file2 = new List<String>();
+
+    while (--tail1 > candidate.file1index) {
+      different.file1.add(file1[tail1]);
+    }
+
+    while (--tail2 > candidate.file2index) {
+      different.file2.add(file2[tail2]);
+    }
+
+    if (different.file1.length > 0 || different.file2.length > 0) {
+      processCommon();
+      different.file1 = different.file1.reversed.toList();
+      different.file2 = different.file2.reversed.toList();
+      result.add(different);
+    }
+
+    if (tail1 >= 0) {
+      common.common.add(file1[tail1]);
+    }
+  }
+
+  processCommon();
+
+  return result.reversed.toList();
 }
 
 List<patchResult> diff_patch(List<String> file1, List<String> file2) {
