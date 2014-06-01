@@ -163,7 +163,14 @@ List<diffSet> diff_indices(List<String> file1, List<String> file2) {
 
 // TODO(adam): make private
 void addHunk(diffSet h, Side side, List<diff3Set> hunks) {
-  throw new UnimplementedError();
+  diff3Set diff3SetHunk = new diff3Set();
+  diff3SetHunk
+    ..side = side
+    ..file1offset = h.file1.offset
+    ..file1length = h.file1.length
+    ..file2offset = h.file2.offset
+    ..file2length = h.file2.length;
+  hunks.add(diff3SetHunk);
 }
 
 // TODO(adam): make this a closure
