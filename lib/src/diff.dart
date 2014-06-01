@@ -253,7 +253,33 @@ List<commonOrDifferentThing> diff_comm(List<String> file1, List<String> file2) {
 }
 
 List<patchResult> diff_patch(List<String> file1, List<String> file2) {
-  throw new UnimplementedError();
+  // We apply the LCD to build a JSON representation of a
+  // diff(1)-style patch.
+
+  List<patchResult> result = new List<patchResult>();
+  int tail1 = file1.length;
+  int tail2 = file2.length;
+
+  for (CandidateThing candidate = longest_common_subsequence(file1, file2);
+        candidate != null;
+        candidate = candidate.chain) {
+    int mismatchLength1 = tail1 - candidate.file1index - 1;
+    int mismatchLength2 = tail2 - candidate.file2index - 1;
+    tail1 = candidate.file1index;
+    tail2 = candidate.file2index;
+
+    if (mismatchLength1 > 0 || mismatchLength2 > 0) {
+      patchResult thisResult = new patchResult();
+      thisResult
+        ..file1 = new patchDescriptionThing.fromFile(file1, candidate.file1index + 1, mismatchLength1)
+        ..file2 = new patchDescriptionThing.fromFile(file2, candidate.file2index + 1, mismatchLength2);
+
+      result.add(thisResult);
+    }
+  }
+
+
+  return result.reversed.toList();
 }
 
 List<patchResult> strip_patch(List<patchResult> patch) {
