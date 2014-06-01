@@ -120,7 +120,78 @@ class MergeConflictResultBlock implements IMergeResultBlock {
 
 CandidateThing longest_common_subsequence(List<String> file1, List<String>
     file2) {
-  throw new UnimplementedError();
+  /* Text diff algorithm following Hunt and McIlroy 1976.
+   * J. W. Hunt and M. D. McIlroy, An algorithm for differential file
+   * comparison, Bell Telephone Laboratories CSTR #41 (1976)
+   * http://www.cs.dartmouth.edu/~doug/
+   *
+   * Expects two arrays of strings.
+   */
+
+  Map<String, List<int>> equivalenceClasses = new Map<String, List<int>>();
+  List<int> file2indices;
+  Map<int, CandidateThing> candidates = new Map<int, CandidateThing>();
+
+  candidates[0] = new CandidateThing()
+                  ..file1index = -1
+                  ..file2index = -1
+                  ..chain = null;
+
+  for (int j = 0; j < file2.length; j++) {
+    String line = file2[j];
+    if (equivalenceClasses.containsKey(line)) {
+      equivalenceClasses[line].add(j);
+    } else {
+      equivalenceClasses[line] = <int>[j];
+    }
+  }
+
+  for (int i = 0; i < file1.length; i++) {
+    String line = file1[i];
+    if (equivalenceClasses.containsKey(line)) {
+      file2indices = equivalenceClasses[line];
+    } else {
+      file2indices = new List<int>();
+    }
+
+    int r = 0;
+    int s = 0;
+    CandidateThing c = candidates[0];
+
+    for (int jX = 0; jX < file2indices.length; jX++) {
+      int j = file2indices[jX];
+
+      for (s = r; s < candidates.length; s++) {
+        if ((candidates[s].file2index < j) &&
+            ((s == candidates.length - 1) ||
+                (candidates[s + 1].file2index > j))) {
+          break;
+        }
+      }
+
+      if (s < candidates.length) {
+        CandidateThing newCandidate = new CandidateThing()
+          ..file1index = i
+          ..file2index = j
+          ..chain = candidates[s];
+
+        candidates[r] = c;
+        r = s + 1;
+        c = newCandidate;
+        if (r == candidates.length) {
+          break; // no point in examining further (j)s
+        }
+      }
+    }
+
+    candidates[r] = c;
+  }
+
+  // At this point, we know the LCS: it's in the reverse of the
+  // linked-list through .chain of
+  // candidates[candidates.length - 1].
+
+  return candidates[candidates.length - 1];
 }
 
 // TODO(adam): make this a closure and do not pass common;
