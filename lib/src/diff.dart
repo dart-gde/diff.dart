@@ -1,5 +1,9 @@
 part of diff;
 
+//
+// Arbitrarily-named in-between objects
+//
+
 class CandidateThing {
   int file1index;
   int file2index;
@@ -87,4 +91,25 @@ class conflictRegion {
   int file1RegionEnd;
   int file2RegionStart;
   int file2RegionEnd;
+}
+
+//
+// Merge Result Objects
+//
+
+abstract class IMergeResultBlock {
+    // amusingly, I can't figure out anything they have in common.
+}
+
+class MergeOKResultBlock implements IMergeResultBlock {
+    List<String> ContentLines;
+}
+
+class MergeConflictResultBlock implements IMergeResultBlock {
+    List<String> LeftLines;
+    int LeftIndex;
+    List<String> OldLines;
+    int OldIndex;
+    List<String> RightLines;
+    int RightIndex;
 }
