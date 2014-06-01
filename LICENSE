@@ -1,0 +1,43 @@
+// Copyright (c) 2006, 2008 Tony Garnock-Jones <tonyg@lshift.net>
+// Copyright (c) 2006, 2008 LShift Ltd. <query@lshift.net>
+//
+// Permission is hereby granted, free of charge, to any person
+// obtaining a copy of this software and associated documentation files
+// (the "Software"), to deal in the Software without restriction,
+// including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software,
+// and to permit persons to whom the Software is furnished to do so,
+// subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+// BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+// ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+// CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//
+//
+//
+// Migration to C# (3.0 / .Net 2.0 for Visual Studio 2008) from 
+// Javascript, Copyright (c) 2012 Tao Klerks <tao@klerks.biz>
+// 
+// This ported code is NOT cleaned up in terms of style, nor tested/optimized for 
+//  performance, nor even tested for correctness across all methods - it is an 
+//  extremely simplistic minimal-changes conversion/porting. The plan is to clean 
+//  it up to be more pleasant to look at an deal with at a later time.
+//  To anyone who is familiar with and understands the original terminology of 
+//  diff and diff3 concepts, I apologize for my fanciful naming strategy - I has 
+//  to come up with object names and haven't yet had a chance to review the 
+//  literature.
+// Also added a "diff_merge_keepall()" implementation for simplistic 2-way merge.
+//
+//
+// Migration to dart (Dart VM version: 1.5.0-dev.2.0 (Mon May 26 07:59:20 2014))
+// from C#, Copyright (c) 2014 Adam Singer <financeCoding@gmail.com>
+// 
+// 
