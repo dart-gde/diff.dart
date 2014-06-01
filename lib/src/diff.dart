@@ -133,9 +133,9 @@ CandidateThing longest_common_subsequence(List<String> file1, List<String>
   Map<int, CandidateThing> candidates = new Map<int, CandidateThing>();
 
   candidates[0] = new CandidateThing()
-                  ..file1index = -1
-                  ..file2index = -1
-                  ..chain = null;
+      ..file1index = -1
+      ..file2index = -1
+      ..chain = null;
 
   for (int j = 0; j < file2.length; j++) {
     String line = file2[j];
@@ -162,18 +162,17 @@ CandidateThing longest_common_subsequence(List<String> file1, List<String>
       int j = file2indices[jX];
 
       for (s = r; s < candidates.length; s++) {
-        if ((candidates[s].file2index < j) &&
-            ((s == candidates.length - 1) ||
-                (candidates[s + 1].file2index > j))) {
+        if ((candidates[s].file2index < j) && ((s == candidates.length - 1) ||
+            (candidates[s + 1].file2index > j))) {
           break;
         }
       }
 
       if (s < candidates.length) {
         CandidateThing newCandidate = new CandidateThing()
-          ..file1index = i
-          ..file2index = j
-          ..chain = candidates[s];
+            ..file1index = i
+            ..file2index = j
+            ..chain = candidates[s];
 
         candidates[r] = c;
         r = s + 1;
@@ -208,24 +207,22 @@ List<commonOrDifferentThing> diff_comm(List<String> file1, List<String> file2) {
   int tail1 = file1.length;
   int tail2 = file2.length;
 
-  commonOrDifferentThing common = new commonOrDifferentThing()
-    ..common = new List<String>();
+  commonOrDifferentThing common = new commonOrDifferentThing()..common =
+      new List<String>();
 
   void processCommon() {
     if (common.common.length > 0) {
       common.common = common.common.reversed.toList();
       result.add(common);
-      common = new commonOrDifferentThing()
-        ..common = new List<String>();
+      common = new commonOrDifferentThing()..common = new List<String>();
     }
   }
 
   for (CandidateThing candidate = longest_common_subsequence(file1, file2);
-      candidate != null;
-      candidate = candidate.chain) {
+      candidate != null; candidate = candidate.chain) {
     commonOrDifferentThing different = new commonOrDifferentThing()
-      ..file1 = new List<String>()
-      ..file2 = new List<String>();
+        ..file1 = new List<String>()
+        ..file2 = new List<String>();
 
     while (--tail1 > candidate.file1index) {
       different.file1.add(file1[tail1]);
@@ -261,8 +258,7 @@ List<patchResult> diff_patch(List<String> file1, List<String> file2) {
   int tail2 = file2.length;
 
   for (CandidateThing candidate = longest_common_subsequence(file1, file2);
-        candidate != null;
-        candidate = candidate.chain) {
+      candidate != null; candidate = candidate.chain) {
     int mismatchLength1 = tail1 - candidate.file1index - 1;
     int mismatchLength2 = tail2 - candidate.file2index - 1;
     tail1 = candidate.file1index;
@@ -271,8 +267,10 @@ List<patchResult> diff_patch(List<String> file1, List<String> file2) {
     if (mismatchLength1 > 0 || mismatchLength2 > 0) {
       patchResult thisResult = new patchResult();
       thisResult
-        ..file1 = new patchDescriptionThing.fromFile(file1, candidate.file1index + 1, mismatchLength1)
-        ..file2 = new patchDescriptionThing.fromFile(file2, candidate.file2index + 1, mismatchLength2);
+          ..file1 = new patchDescriptionThing.fromFile(file1,
+              candidate.file1index + 1, mismatchLength1)
+          ..file2 = new patchDescriptionThing.fromFile(file2,
+              candidate.file2index + 1, mismatchLength2);
 
       result.add(thisResult);
     }
@@ -313,8 +311,7 @@ List<diffSet> diff_indices(List<String> file1, List<String> file2) {
   int tail2 = file2.length;
 
   for (CandidateThing candidate = longest_common_subsequence(file1, file2);
-      candidate != null;
-      candidate = candidate.chain) {
+      candidate != null; candidate = candidate.chain) {
     int mismatchLength1 = tail1 - candidate.file1index - 1;
     int mismatchLength2 = tail2 - candidate.file2index - 1;
     tail1 = candidate.file1index;
@@ -323,12 +320,12 @@ List<diffSet> diff_indices(List<String> file1, List<String> file2) {
     if (mismatchLength1 > 0 || mismatchLength2 > 0) {
       diffSet diffSetResult = new diffSet();
       diffSetResult
-        ..file1 = (new chunkReference()
-                    ..offset = tail1 + 1
-                    ..length = mismatchLength1)
-        ..file2 = (new chunkReference()
-                    ..offset = tail2 + 1
-                    ..length = mismatchLength2);
+          ..file1 = (new chunkReference()
+              ..offset = tail1 + 1
+              ..length = mismatchLength1)
+          ..file2 = (new chunkReference()
+              ..offset = tail2 + 1
+              ..length = mismatchLength2);
       result.add(diffSetResult);
     }
   }
@@ -340,11 +337,11 @@ List<diffSet> diff_indices(List<String> file1, List<String> file2) {
 void addHunk(diffSet h, Side side, List<diff3Set> hunks) {
   diff3Set diff3SetHunk = new diff3Set();
   diff3SetHunk
-    ..side = side
-    ..file1offset = h.file1.offset
-    ..file1length = h.file1.length
-    ..file2offset = h.file2.offset
-    ..file2length = h.file2.length;
+      ..side = side
+      ..file1offset = h.file1.offset
+      ..file1length = h.file1.length
+      ..file2offset = h.file2.offset
+      ..file2length = h.file2.length;
   hunks.add(diff3SetHunk);
 }
 
@@ -389,9 +386,9 @@ List<patch3Set> diff3_merge_indices(List<String> a, List<String> o, List<String>
     if (targetOffset > commonOffset) {
       patch3Set patch3SetResult = new patch3Set();
       patch3SetResult
-        ..side = Side.Old
-        ..offset = commonOffset
-        ..length = targetOffset - commonOffset;
+          ..side = Side.Old
+          ..offset = commonOffset
+          ..length = targetOffset - commonOffset;
       result.add(patch3SetResult);
     }
   }
@@ -421,9 +418,9 @@ List<patch3Set> diff3_merge_indices(List<String> a, List<String> o, List<String>
       if (hunk.file2length > 0) {
         patch3Set patch3SetResult = new patch3Set();
         patch3SetResult
-          ..side = hunk.side
-          ..offset = hunk.file2offset
-          ..length = hunk.file2length;
+            ..side = hunk.side
+            ..offset = hunk.file2offset
+            ..length = hunk.file2length;
         result.add(patch3SetResult);
       }
     } else {
@@ -460,24 +457,24 @@ List<patch3Set> diff3_merge_indices(List<String> a, List<String> o, List<String>
         r.file2RegionEnd = Math.max(oRhs, r.file2RegionEnd);
       }
 
-      int aLhs = regions[Side.Left].file1RegionStart +
-          (regionLhs - regions[Side.Left].file2RegionStart);
-      int aRhs = regions[Side.Left].file1RegionEnd +
-          (regionRhs - regions[Side.Left].file2RegionEnd);
-      int bLhs = regions[Side.Right].file1RegionStart +
-          (regionLhs - regions[Side.Right].file2RegionStart);
-      int bRhs = regions[Side.Right].file1RegionEnd +
-          (regionRhs - regions[Side.Right].file2RegionEnd);
+      int aLhs = regions[Side.Left].file1RegionStart + (regionLhs -
+          regions[Side.Left].file2RegionStart);
+      int aRhs = regions[Side.Left].file1RegionEnd + (regionRhs -
+          regions[Side.Left].file2RegionEnd);
+      int bLhs = regions[Side.Right].file1RegionStart + (regionLhs -
+          regions[Side.Right].file2RegionStart);
+      int bRhs = regions[Side.Right].file1RegionEnd + (regionRhs -
+          regions[Side.Right].file2RegionEnd);
 
       patch3Set patch3SetResult = new patch3Set();
       patch3SetResult
-        ..side = Side.Conflict
-        ..offset = aLhs
-        ..length = aRhs - aLhs
-        ..conflictOldOffset = regionLhs
-        ..conflictOldLength = regionRhs - regionLhs
-        ..conflictRightOffset = bLhs
-        ..conflictRightLength = bRhs - bLhs;
+          ..side = Side.Conflict
+          ..offset = aLhs
+          ..length = aRhs - aLhs
+          ..conflictOldOffset = regionLhs
+          ..conflictOldLength = regionRhs - regionLhs
+          ..conflictRightOffset = bLhs
+          ..conflictRightLength = bRhs - bLhs;
       result.add(patch3SetResult);
     }
 
