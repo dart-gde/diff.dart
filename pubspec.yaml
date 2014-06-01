@@ -1,4 +1,10 @@
 name: diff
-description: A sample command-line application
+version: 0.0.1
+authors:
+- Adam Singer <financeCoding@gmail.com>
+description: A diff library
+homepage: https://github.com/dart-gde/diff
+environment:
+  sdk: '>=1.0.0 <2.0.0'
 dev_dependencies:
-  unittest: any
+  unittest: ">=0.11.0 <0.12.0"

@@ -684,7 +684,6 @@ Diff3DigResult diff3_dig(String ours, String base, String theirs) {
           lines.add(">>>>>>>>>");
         }
       }
-
     } else {
       throw new StateError("item type is not expected: ${item.runtimeType}");
     }
