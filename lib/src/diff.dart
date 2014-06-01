@@ -290,11 +290,11 @@ List<patchResult> strip_patch(List<patchResult> patch) {
     patchResult chunk = patch[i];
     patchResult patchResultNewPatch = new patchResult();
     patchResultNewPatch.file1 = new patchDescriptionThing()
-    ..Offset = chunk.file1.Offset
-    ..Length = chunk.file1.Length;
+        ..Offset = chunk.file1.Offset
+        ..Length = chunk.file1.Length;
 
-    patchResultNewPatch.file2 = new patchDescriptionThing()
-    ..Chunk = chunk.file2.Chunk;
+    patchResultNewPatch.file2 = new patchDescriptionThing()..Chunk =
+        chunk.file2.Chunk;
 
     newpatch.add(patchResultNewPatch);
   }
