@@ -93,6 +93,12 @@ class conflictRegion {
   int file2RegionEnd;
 }
 
+
+class Diff3DigResult {
+  bool Conflict;
+  List<String> Text;
+}
+
 //
 // Merge Result Objects
 //
@@ -645,4 +651,46 @@ List<IMergeResultBlock> diff3_merge(List<String> a, List<String> o, List<String>
 
   flushOk(okLines, result);
   return result;
+}
+
+Diff3DigResult diff3_dig(String ours, String base, String theirs) {
+  List<String> a = ours.split("\n");
+  List<String> b = theirs.split("\n");
+  List<String> o = base.split("\n");
+
+  List<IMergeResultBlock> merger = diff3_merge(a, o, b, false);
+
+  bool conflict = false;
+  List<String> lines = new List<String>();
+
+  for (int i = 0; i < merger.length; i++) {
+    IMergeResultBlock item = merger[i];
+
+    if (item is MergeOKResultBlock) {
+      lines.addAll(item.ContentLines);
+    } else if (item is MergeConflictResultBlock) {
+      List<commonOrDifferentThing> inners = diff_comm(item.LeftLines, item.RightLines);
+      for (int j = 0; j < inners.length; j++) {
+        commonOrDifferentThing inner = inners[j];
+        if (inner.common.length > 0) {
+          lines.addAll(inner.common);
+        } else {
+          conflict = true;
+          lines.add("<<<<<<<<<");
+          lines.addAll(inner.file1);
+          lines.add("=========");
+          lines.addAll(inner.file2);
+          lines.add(">>>>>>>>>");
+        }
+      }
+
+    } else {
+      throw new StateError("item type is not expected: ${item.runtimeType}");
+    }
+  }
+
+  Diff3DigResult diff3DigResult = new Diff3DigResult();
+  diff3DigResult.Conflict = conflict;
+  diff3DigResult.Text = lines;
+  return diff3DigResult;
 }
