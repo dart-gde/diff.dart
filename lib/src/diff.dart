@@ -281,7 +281,25 @@ List<patchResult> diff_patch(List<String> file1, List<String> file2) {
 }
 
 List<patchResult> strip_patch(List<patchResult> patch) {
-  throw new UnimplementedError();
+  // Takes the output of Diff.diff_patch(), and removes
+  // information from it. It can still be used by patch(),
+  // below, but can no longer be inverted.
+
+  List<patchResult> newpatch = new List<patchResult>();
+  for (int i = 0; i < patch.length; i++) {
+    patchResult chunk = patch[i];
+    patchResult patchResultNewPatch = new patchResult();
+    patchResultNewPatch.file1 = new patchDescriptionThing()
+    ..Offset = chunk.file1.Offset
+    ..Length = chunk.file1.Length;
+
+    patchResultNewPatch.file2 = new patchDescriptionThing()
+    ..Chunk = chunk.file2.Chunk;
+
+    newpatch.add(patchResultNewPatch);
+  }
+
+  return newpatch;
 }
 
 void invert_patch(List<patchResult> patch) {
