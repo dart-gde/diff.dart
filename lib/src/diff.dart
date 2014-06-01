@@ -183,7 +183,20 @@ void flushOk(List<String> okLines, List<IMergeResultBlock> result) {
 
 // TODO(adam): make private
 bool isTrueConflict(patch3Set rec, List<String> a, List<String> b) {
-  throw new UnimplementedError();
+  if (rec.length != rec.conflictRightLength) {
+    return true;
+  }
+
+  int aoff = rec.offset;
+  int boff = rec.conflictRightOffset;
+
+  for (int j = 0; j < rec.length; j++) {
+    if (a[j + aoff] != b[j + boff]) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 List<IMergeResultBlock> diff3_merge(List<String> a, List<String> o, List<String>
