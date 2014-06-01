@@ -320,7 +320,34 @@ void invert_patch(List<patchResult> patch) {
 //}
 
 List<String> patch(List<String> file, List<patchResult> patch) {
-  throw new UnimplementedError();
+  // Applies a patch to a file.
+  //
+  // Given file1 and file2, Diff.patch(file1, Diff.diff_patch(file1, file2)) should give file2.
+
+  List<String> result = new List<String>();
+  int commonOffset = 0;
+
+  void copyCommon(int targetOffset) {
+    while (commonOffset < targetOffset) {
+      result.add(file[commonOffset]);
+      commonOffset++;
+    }
+  }
+
+  for (int chunkIndex = 0; chunkIndex < patch.length; chunkIndex++) {
+    patchResult chunk = patch[chunkIndex];
+    copyCommon(chunk.file1.Offset);
+
+    for (int lineIndex = 0; lineIndex < chunk.file2.Chunk.length; lineIndex++) {
+      result.add(chunk.file2.Chunk[lineIndex]);
+    }
+
+    commonOffset += chunk.file1.Length;
+  }
+
+  copyCommon(file.length);
+
+  return result;
 }
 
 List<String> diff_merge_keepall(List<String> file1, List<String> file2) {
