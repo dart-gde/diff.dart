@@ -181,12 +181,46 @@ void flushOk(List<String> okLines, List<IMergeResultBlock> result) {
   throw new UnimplementedError();
 }
 
-// TODO(adam): make closure
-//bool isTrueConflict(patch3Set rec, string[] a, string[] b)  {
-//
-//}
+// TODO(adam): make private
+bool isTrueConflict(patch3Set rec, List<String> a, List<String> b) {
+  throw new UnimplementedError();
+}
 
 List<IMergeResultBlock> diff3_merge(List<String> a, List<String> o, List<String>
     b, bool excludeFalseConflicts) {
-  throw new UnimplementedError();
+  List<IMergeResultBlock> result = new List<IMergeResultBlock>();
+  Map<Side, List<String>> files = new Map<Side, List<String>>();
+  files[Side.Left] = a;
+  files[Side.Old] = o;
+  files[Side.Right] = b;
+
+  List<patch3Set> indices = diff3_merge_indices(a, o, b);
+  List<String> okLines = new List<String>();
+
+  for (int i = 0; i < indices.length; i++) {
+    patch3Set x = indices[i];
+    Side side = x.side;
+
+    if (side == Side.Conflict) {
+      if (excludeFalseConflicts && !isTrueConflict(x, a, b)) {
+        okLines.addAll(files[0].getRange(x.offset, x.offset + x.length).toList());
+      } else {
+        flushOk(okLines, result);
+        MergeConflictResultBlock mergeConflictResultBlock = new MergeConflictResultBlock();
+        mergeConflictResultBlock
+        ..LeftLines = a.getRange(x.offset, x.offset + x.length).toList()
+        ..LeftIndex = x.offset
+        ..OldLines = o.getRange(x.conflictOldOffset, x.conflictOldOffset + x.conflictOldLength)
+        ..OldIndex = x.conflictOldOffset
+        ..RightLines = b.getRange(x.conflictRightOffset, x.conflictRightOffset + x.conflictRightLength).toList()
+        ..RightIndex = x.offset;
+        result.add(mergeConflictResultBlock);
+      }
+    } else {
+      okLines.addAll(files[side].getRange(x.offset, x.offset + x.length).toList());
+    }
+  }
+
+  flushOk(okLines, result);
+  return result;
 }

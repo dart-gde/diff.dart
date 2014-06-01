@@ -5,7 +5,7 @@ import "package:unittest/unittest.dart";
 import "package:diff/diff.dart";
 
 tests() {
-  test('enum compare', () {
+  test('Side enum compare', () {
     Side conflict = Side.Conflict;
     Side left = Side.Left;
     int i = conflict.compareTo(left);
@@ -20,6 +20,11 @@ tests() {
     Side conflict2 = Side.Conflict;
     i = conflict.compareTo(conflict2);
     expect(i, equals(0));
+  });
+
+  test('Side enum equal', () {
+    Side conflict = Side.Conflict;
+    expect(conflict, equals(Side.Conflict));
   });
 }
 
