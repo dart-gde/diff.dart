@@ -178,7 +178,13 @@ List<patch3Set> diff3_merge_indices(List<String> a, List<String> o, List<String>
 
 // TODO(adam): make private
 void flushOk(List<String> okLines, List<IMergeResultBlock> result) {
-  throw new UnimplementedError();
+  if (okLines.length > 0) {
+    MergeOKResultBlock okResult = new MergeOKResultBlock();
+    okResult.ContentLines = okLines.toList();
+    result.add(okResult);
+  }
+
+  okLines.clear();
 }
 
 // TODO(adam): make private
