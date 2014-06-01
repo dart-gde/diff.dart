@@ -98,18 +98,18 @@ class conflictRegion {
 //
 
 abstract class IMergeResultBlock {
-    // amusingly, I can't figure out anything they have in common.
+  // amusingly, I can't figure out anything they have in common.
 }
 
 class MergeOKResultBlock implements IMergeResultBlock {
-    List<String> ContentLines;
+  List<String> ContentLines;
 }
 
 class MergeConflictResultBlock implements IMergeResultBlock {
-    List<String> LeftLines;
-    int LeftIndex;
-    List<String> OldLines;
-    int OldIndex;
-    List<String> RightLines;
-    int RightIndex;
+  List<String> LeftLines;
+  int LeftIndex;
+  List<String> OldLines;
+  int OldIndex;
+  List<String> RightLines;
+  int RightIndex;
 }
