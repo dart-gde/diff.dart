@@ -216,21 +216,26 @@ List<IMergeResultBlock> diff3_merge(List<String> a, List<String> o, List<String>
 
     if (side == Side.Conflict) {
       if (excludeFalseConflicts && !isTrueConflict(x, a, b)) {
-        okLines.addAll(files[0].getRange(x.offset, x.offset + x.length).toList());
+        okLines.addAll(files[0].getRange(x.offset, x.offset + x.length).toList()
+            );
       } else {
         flushOk(okLines, result);
-        MergeConflictResultBlock mergeConflictResultBlock = new MergeConflictResultBlock();
+        MergeConflictResultBlock mergeConflictResultBlock =
+            new MergeConflictResultBlock();
         mergeConflictResultBlock
-        ..LeftLines = a.getRange(x.offset, x.offset + x.length).toList()
-        ..LeftIndex = x.offset
-        ..OldLines = o.getRange(x.conflictOldOffset, x.conflictOldOffset + x.conflictOldLength)
-        ..OldIndex = x.conflictOldOffset
-        ..RightLines = b.getRange(x.conflictRightOffset, x.conflictRightOffset + x.conflictRightLength).toList()
-        ..RightIndex = x.offset;
+            ..LeftLines = a.getRange(x.offset, x.offset + x.length).toList()
+            ..LeftIndex = x.offset
+            ..OldLines = o.getRange(x.conflictOldOffset, x.conflictOldOffset +
+                x.conflictOldLength).toList()
+            ..OldIndex = x.conflictOldOffset
+            ..RightLines = b.getRange(x.conflictRightOffset,
+                x.conflictRightOffset + x.conflictRightLength).toList()
+            ..RightIndex = x.offset;
         result.add(mergeConflictResultBlock);
       }
     } else {
-      okLines.addAll(files[side].getRange(x.offset, x.offset + x.length).toList());
+      okLines.addAll(files[side].getRange(x.offset, x.offset + x.length).toList(
+          ));
     }
   }
 
