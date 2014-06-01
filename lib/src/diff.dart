@@ -378,7 +378,7 @@ List<String> diff_merge_keepall(List<String> file1, List<String> file2) {
     if (chunk.file2.Length > 0) {
       //copy any not-yet-copied portion of file1 to the end of this patch entry
       result.addAll(file1.getRange(file1CompletedToOffset, chunk.file1.Offset +
-                                       chunk.file1.Length).toList());
+          chunk.file1.Length).toList());
       file1CompletedToOffset = chunk.file1.Offset + chunk.file1.Length;
 
       // copy the file2 portion of this patch entry
@@ -669,7 +669,8 @@ Diff3DigResult diff3_dig(String ours, String base, String theirs) {
     if (item is MergeOKResultBlock) {
       lines.addAll(item.ContentLines);
     } else if (item is MergeConflictResultBlock) {
-      List<commonOrDifferentThing> inners = diff_comm(item.LeftLines, item.RightLines);
+      List<commonOrDifferentThing> inners = diff_comm(item.LeftLines,
+          item.RightLines);
       for (int j = 0; j < inners.length; j++) {
         commonOrDifferentThing inner = inners[j];
         if (inner.common.length > 0) {
