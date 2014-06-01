@@ -158,7 +158,36 @@ List<String> diff_merge_keepall(List<String> file1, List<String> file2) {
 }
 
 List<diffSet> diff_indices(List<String> file1, List<String> file2) {
-  throw new UnimplementedError();
+  // We apply the LCS to give a simple representation of the
+  // offsets and lengths of mismatched chunks in the input
+  // files. This is used by diff3_merge_indices below.
+
+  List<diffSet> result = new List<diffSet>();
+  int tail1 = file1.length;
+  int tail2 = file2.length;
+
+  for (CandidateThing candidate = longest_common_subsequence(file1, file2);
+      candidate != null;
+      candidate = candidate.chain) {
+    int mismatchLength1 = tail1 - candidate.file1index - 1;
+    int mismatchLength2 = tail2 - candidate.file2index - 1;
+    tail1 = candidate.file1index;
+    tail2 = candidate.file2index;
+
+    if (mismatchLength1 > 0 || mismatchLength2 > 0) {
+      diffSet diffSetResult = new diffSet();
+      diffSetResult
+        ..file1 = (new chunkReference()
+                    ..offset = tail1 + 1
+                    ..length = mismatchLength1)
+        ..file2 = (new chunkReference()
+                    ..offset = tail2 + 1
+                    ..length = mismatchLength2);
+      result.add(diffSetResult);
+    }
+  }
+
+  return result.reversed.toList();
 }
 
 // TODO(adam): make private
