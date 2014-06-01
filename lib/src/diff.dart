@@ -118,7 +118,8 @@ class MergeConflictResultBlock implements IMergeResultBlock {
 // Methods
 //
 
-CandidateThing longest_common_subsequence(List<String> file1, List<String> file2) {
+CandidateThing longest_common_subsequence(List<String> file1, List<String>
+    file2) {
   throw new UnimplementedError();
 }
 
@@ -170,7 +171,8 @@ void addHunk(diffSet h, Side side, List<diff3Set> hunks) {
 //
 //}
 
-List<patch3Set> diff3_merge_indices(List<String> a, List<String> o, List<String> b) {
+List<patch3Set> diff3_merge_indices(List<String> a, List<String> o, List<String>
+    b) {
   throw new UnimplementedError();
 }
 
@@ -184,6 +186,7 @@ void flushOk(List<String> okLines, List<IMergeResultBlock> result) {
 //
 //}
 
-List<IMergeResultBlock> diff3_merge(List<String> a, List<String> o, List<String> b, bool excludeFalseConflicts)  {
+List<IMergeResultBlock> diff3_merge(List<String> a, List<String> o, List<String>
+    b, bool excludeFalseConflicts) {
   throw new UnimplementedError();
 }
