@@ -303,7 +303,15 @@ List<patchResult> strip_patch(List<patchResult> patch) {
 }
 
 void invert_patch(List<patchResult> patch) {
-  throw new UnimplementedError();
+  // Takes the output of Diff.diff_patch(), and inverts the
+  // sense of it, so that it can be applied to file2 to give
+  // file1 rather than the other way around.
+  for (int i = 0; i < patch.length; i++) {
+    patchResult chunk = patch[i];
+    patchDescriptionThing tmp = chunk.file1;
+    chunk.file1 = chunk.file2;
+    chunk.file2 = tmp;
+  }
 }
 
 // TODO(adam): make this a closure
