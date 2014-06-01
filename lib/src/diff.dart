@@ -185,8 +185,125 @@ List<patch3Set> diff3_merge_indices(List<String> a, List<String> o, List<String>
   //
   // (http://www.cis.upenn.edu/~bcpierce/papers/diff3-short.pdf)
 
+  List<diffSet> m1 = diff_indices(o, a);
+  List<diffSet> m2 = diff_indices(o, b);
 
-  throw new UnimplementedError();
+  List<diff3Set> hunks = new List<diff3Set>();
+
+  for (int i = 0; i < m1.length; i++) {
+    addHunk(m1[i], Side.Left, hunks);
+  }
+
+  for (int i = 0; i < m2.length; i++) {
+    addHunk(m2[i], Side.Right, hunks);
+  }
+
+  hunks.sort();
+
+  List<patch3Set> result = new List<patch3Set>();
+  int commonOffset = 0;
+
+  void copyCommon(int targetOffset) {
+    if (targetOffset > commonOffset) {
+      patch3Set patch3SetResult = new patch3Set();
+      patch3SetResult
+        ..side = Side.Old
+        ..offset = commonOffset
+        ..length = targetOffset - commonOffset;
+      result.add(patch3SetResult);
+    }
+  }
+
+  for (int hunkIndex = 0; hunkIndex < hunks.length; hunkIndex++) {
+    int firstHunkIndex = hunkIndex;
+    diff3Set hunk = hunks[hunkIndex];
+    int regionLhs = hunk.file1offset;
+    int regionRhs = regionLhs + hunk.file1length;
+
+    while (hunkIndex < hunks.length - 1) {
+      diff3Set maybeOverlapping = hunks[hunkIndex + 1];
+      int maybeLhs = maybeOverlapping.file1offset;
+      if (maybeLhs > regionRhs) {
+        break;
+      }
+
+      regionRhs = Math.max(regionRhs, maybeLhs + maybeOverlapping.file1length);
+      hunkIndex++;
+    }
+
+    copyCommon(regionLhs);
+    if (firstHunkIndex == hunkIndex) {
+      // The "overlap" was only one hunk long, meaning that
+      // there's no conflict here. Either a and o were the
+      // same, or b and o were the same.
+      if (hunk.file2length > 0) {
+        patch3Set patch3SetResult = new patch3Set();
+        patch3SetResult
+          ..side = hunk.side
+          ..offset = hunk.file2offset
+          ..length = hunk.file2length;
+        result.add(patch3SetResult);
+      }
+    } else {
+      // A proper conflict. Determine the extents of the
+      // regions involved from a, o and b. Effectively merge
+      // all the hunks on the left into one giant hunk, and
+      // do the same for the right; then, correct for skew
+      // in the regions of o that each side changed, and
+      // report appropriate spans for the three sides.
+      Map<Side, conflictRegion> regions = new Map<Side, conflictRegion>();
+      regions[Side.Left] = new conflictRegion()
+          ..file1RegionStart = a.length
+          ..file1RegionEnd = -1
+          ..file2RegionStart = o.length
+          ..file2RegionEnd = -1;
+
+      regions[Side.Right] = new conflictRegion()
+          ..file1RegionStart = b.length
+          ..file1RegionEnd = -1
+          ..file2RegionStart = o.length
+          ..file2RegionEnd = -1;
+
+      for (int i = firstHunkIndex; i <= hunkIndex; i++) {
+        hunk = hunks[i];
+        Side side = hunk.side;
+        conflictRegion r = regions[side];
+        int oLhs = hunk.file1offset;
+        int oRhs = oLhs + hunk.file1length;
+        int abLhs = hunk.file2offset;
+        int abRhs = abLhs + hunk.file2length;
+        r.file1RegionStart = Math.min(abLhs, r.file1RegionStart);
+        r.file1RegionEnd = Math.max(abRhs, r.file1RegionEnd);
+        r.file2RegionStart = Math.min(oLhs, r.file2RegionStart);
+        r.file2RegionEnd = Math.max(oRhs, r.file2RegionEnd);
+      }
+
+      int aLhs = regions[Side.Left].file1RegionStart +
+          (regionLhs - regions[Side.Left].file2RegionStart);
+      int aRhs = regions[Side.Left].file1RegionEnd +
+          (regionRhs - regions[Side.Left].file2RegionEnd);
+      int bLhs = regions[Side.Right].file1RegionStart +
+          (regionLhs - regions[Side.Right].file2RegionStart);
+      int bRhs = regions[Side.Right].file1RegionEnd +
+          (regionRhs - regions[Side.Right].file2RegionEnd);
+
+      patch3Set patch3SetResult = new patch3Set();
+      patch3SetResult
+        ..side = Side.Conflict
+        ..offset = aLhs
+        ..length = aRhs - aLhs
+        ..conflictOldOffset = regionLhs
+        ..conflictOldLength = regionRhs - regionLhs
+        ..conflictRightOffset = bLhs
+        ..conflictRightLength = bRhs - bLhs;
+      result.add(patch3SetResult);
+    }
+
+    commonOffset = regionRhs;
+  }
+
+  copyCommon(o.length);
+  return result;
 }
 
 // TODO(adam): make private
