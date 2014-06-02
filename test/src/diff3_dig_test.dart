@@ -19,6 +19,7 @@ void defineTests() {
       Diff3DigResult diff3DigResult = diff3_dig(a, o, b);
 
       expect(diff3DigResult, isNotNull);
+      expect(diff3DigResult.Conflict, isTrue);
       String expectResultText = """AA
 a
 <<<<<<<<<
