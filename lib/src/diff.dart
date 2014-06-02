@@ -213,14 +213,15 @@ List<commonOrDifferentThing> diff_comm(List<String> file1, List<String> file2) {
   int tail1 = file1.length;
   int tail2 = file2.length;
 
-  commonOrDifferentThing common = new commonOrDifferentThing()..common =
-      new List<String>();
+  commonOrDifferentThing common = new commonOrDifferentThing();
+  common.common = new List<String>();
 
   void processCommon() {
     if (common.common.length > 0) {
       common.common = common.common.reversed.toList();
       result.add(common);
-      common = new commonOrDifferentThing()..common = new List<String>();
+      common = new commonOrDifferentThing();
+      common.common = new List<String>();
     }
   }
 
@@ -228,7 +229,8 @@ List<commonOrDifferentThing> diff_comm(List<String> file1, List<String> file2) {
       candidate != null; candidate = candidate.chain) {
     commonOrDifferentThing different = new commonOrDifferentThing()
         ..file1 = new List<String>()
-        ..file2 = new List<String>();
+        ..file2 = new List<String>()
+        ..common = new List<String>();
 
     while (--tail1 > candidate.file1index) {
       different.file1.add(file1[tail1]);
