@@ -1,9 +1,9 @@
 name: diff
-version: 0.0.1
+version: 0.0.2-dev
 authors:
 - Adam Singer <financeCoding@gmail.com>
 description: A diff library
-homepage: https://github.com/dart-gde/diff
+homepage: https://github.com/dart-gde/diff.dart
 environment:
   sdk: '>=1.0.0 <2.0.0'
 dev_dependencies:
