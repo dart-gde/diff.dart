@@ -24,9 +24,9 @@ void main(List<String> args) {
   Diff3DigResult diff3DigResult = diff3Dig(file1Contents, file2Contents,
       file3Contents);
 
-  if (diff3DigResult.Conflict) {
+  if (diff3DigResult.conflict) {
     print("diff3_dig: $filename1, $filename2, $filename3");
-    print(diff3DigResult.Text.join("\n"));
+    print(diff3DigResult.text.join("\n"));
   } else {
     print("No conflicts found with $filename1, $filename2, $filename3");
   }

@@ -19,16 +19,14 @@ class CommonOrDifferentThing {
 class PatchDescriptionThing {
   PatchDescriptionThing() {}
 
-  PatchDescriptionThing.fromFile(List<String> file, int offset, int length) {
-    Offset = offset;
-    Length = length;
-    Chunk = new List<String>.from(file.getRange(offset, offset + length).toList(
+  PatchDescriptionThing.fromFile(List<String> file, this.offset, this.length) {
+    chunk = new List<String>.from(file.getRange(offset, offset + length).toList(
         ));
   }
 
-  int Offset;
-  int Length;
-  List<String> Chunk;
+  int offset;
+  int length;
+  List<String> chunk;
 }
 
 class PatchResult {
@@ -95,8 +93,8 @@ class ConflictRegion {
 
 
 class Diff3DigResult {
-  bool Conflict;
-  List<String> Text;
+  bool conflict;
+  List<String> text;
 }
 
 //
@@ -108,16 +106,16 @@ abstract class IMergeResultBlock {
 }
 
 class MergeOKResultBlock implements IMergeResultBlock {
-  List<String> ContentLines;
+  List<String> contentLines;
 }
 
 class MergeConflictResultBlock implements IMergeResultBlock {
-  List<String> LeftLines;
-  int LeftIndex;
-  List<String> OldLines;
-  int OldIndex;
-  List<String> RightLines;
-  int RightIndex;
+  List<String> leftLines;
+  int leftIndex;
+  List<String> oldLines;
+  int oldIndex;
+  List<String> rightLines;
+  int rightIndex;
 }
 
 //
@@ -298,11 +296,11 @@ List<PatchResult> stripPatch(List<PatchResult> patch) {
     PatchResult chunk = patch[i];
     PatchResult patchResultNewPatch = new PatchResult();
     patchResultNewPatch.file1 = new PatchDescriptionThing()
-        ..Offset = chunk.file1.Offset
-        ..Length = chunk.file1.Length;
+        ..offset = chunk.file1.offset
+        ..length = chunk.file1.length;
 
-    patchResultNewPatch.file2 = new PatchDescriptionThing()..Chunk =
-        chunk.file2.Chunk;
+    patchResultNewPatch.file2 = new PatchDescriptionThing()..chunk =
+        chunk.file2.chunk;
 
     newpatch.add(patchResultNewPatch);
   }
@@ -344,13 +342,13 @@ List<String> patch(List<String> file, List<PatchResult> patch) {
 
   for (int chunkIndex = 0; chunkIndex < patch.length; chunkIndex++) {
     PatchResult chunk = patch[chunkIndex];
-    copyCommon(chunk.file1.Offset);
+    copyCommon(chunk.file1.offset);
 
-    for (int lineIndex = 0; lineIndex < chunk.file2.Chunk.length; lineIndex++) {
-      result.add(chunk.file2.Chunk[lineIndex]);
+    for (int lineIndex = 0; lineIndex < chunk.file2.chunk.length; lineIndex++) {
+      result.add(chunk.file2.chunk[lineIndex]);
     }
 
-    commonOffset += chunk.file1.Length;
+    commonOffset += chunk.file1.length;
   }
 
   copyCommon(file.length);
@@ -377,14 +375,14 @@ List<String> diffMergeKeepall(List<String> file1, List<String> file2) {
 
   for (int chunkIndex = 0; chunkIndex < diffPatches.length; chunkIndex++) {
     PatchResult chunk = diffPatches[chunkIndex];
-    if (chunk.file2.Length > 0) {
+    if (chunk.file2.length > 0) {
       //copy any not-yet-copied portion of file1 to the end of this patch entry
-      result.addAll(file1.getRange(file1CompletedToOffset, chunk.file1.Offset +
-          chunk.file1.Length).toList());
-      file1CompletedToOffset = chunk.file1.Offset + chunk.file1.Length;
+      result.addAll(file1.getRange(file1CompletedToOffset, chunk.file1.offset +
+          chunk.file1.length).toList());
+      file1CompletedToOffset = chunk.file1.offset + chunk.file1.length;
 
       // copy the file2 portion of this patch entry
-      result.addAll(chunk.file2.Chunk);
+      result.addAll(chunk.file2.chunk);
     }
   }
 
@@ -582,7 +580,7 @@ List<Patch3Set> diff3MergeIndices(List<String> a, List<String> o, List<String>
 void flushOk(List<String> okLines, List<IMergeResultBlock> result) {
   if (okLines.length > 0) {
     MergeOKResultBlock okResult = new MergeOKResultBlock();
-    okResult.ContentLines = okLines.toList();
+    okResult.contentLines = okLines.toList();
     result.add(okResult);
   }
 
@@ -635,14 +633,14 @@ List<IMergeResultBlock> diff3Merge(List<String> a, List<String> o, List<String>
         MergeConflictResultBlock mergeConflictResultBlock =
             new MergeConflictResultBlock();
         mergeConflictResultBlock
-            ..LeftLines = a.getRange(x.offset, x.offset + x.length).toList()
-            ..LeftIndex = x.offset
-            ..OldLines = o.getRange(x.conflictOldOffset, x.conflictOldOffset +
+            ..leftLines = a.getRange(x.offset, x.offset + x.length).toList()
+            ..leftIndex = x.offset
+            ..oldLines = o.getRange(x.conflictOldOffset, x.conflictOldOffset +
                 x.conflictOldLength).toList()
-            ..OldIndex = x.conflictOldOffset
-            ..RightLines = b.getRange(x.conflictRightOffset,
+            ..oldIndex = x.conflictOldOffset
+            ..rightLines = b.getRange(x.conflictRightOffset,
                 x.conflictRightOffset + x.conflictRightLength).toList()
-            ..RightIndex = x.offset;
+            ..rightIndex = x.offset;
         result.add(mergeConflictResultBlock);
       }
     } else {
@@ -669,10 +667,10 @@ Diff3DigResult diff3Dig(String ours, String base, String theirs) {
     IMergeResultBlock item = merger[i];
 
     if (item is MergeOKResultBlock) {
-      lines.addAll(item.ContentLines);
+      lines.addAll(item.contentLines);
     } else if (item is MergeConflictResultBlock) {
-      List<CommonOrDifferentThing> inners = diffComm(item.LeftLines,
-          item.RightLines);
+      List<CommonOrDifferentThing> inners = diffComm(item.leftLines,
+          item.rightLines);
       for (int j = 0; j < inners.length; j++) {
         CommonOrDifferentThing inner = inners[j];
         if (inner.common.length > 0) {
@@ -692,7 +690,7 @@ Diff3DigResult diff3Dig(String ours, String base, String theirs) {
   }
 
   Diff3DigResult diff3DigResult = new Diff3DigResult();
-  diff3DigResult.Conflict = conflict;
-  diff3DigResult.Text = lines;
+  diff3DigResult.conflict = conflict;
+  diff3DigResult.text = lines;
   return diff3DigResult;
 }

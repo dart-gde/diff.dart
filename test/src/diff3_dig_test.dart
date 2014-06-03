@@ -19,7 +19,7 @@ void defineTests() {
       Diff3DigResult diff3DigResult = diff3Dig(a, o, b);
 
       expect(diff3DigResult, isNotNull);
-      expect(diff3DigResult.Conflict, isTrue);
+      expect(diff3DigResult.conflict, isTrue);
       String expectResultText = """AA
 a
 <<<<<<<<<
@@ -41,7 +41,7 @@ M
 z
 z
 99""";
-      String actualResultText = diff3DigResult.Text.join("\n");
+      String actualResultText = diff3DigResult.text.join("\n");
       expect(actualResultText, equals(expectResultText));
     });
   });
