@@ -21,7 +21,7 @@ void main(List<String> args) {
   File file3 = new File(filename3);
   String file3Contents = file3.readAsStringSync();
 
-  Diff3DigResult diff3DigResult = diff3_dig(file1Contents, file2Contents,
+  Diff3DigResult diff3DigResult = diff3Dig(file1Contents, file2Contents,
       file3Contents);
 
   if (diff3DigResult.Conflict) {

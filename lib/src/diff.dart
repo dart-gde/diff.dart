@@ -41,7 +41,7 @@ class ChunkReference {
   int length;
 }
 
-class diffSet {
+class DiffSet {
   ChunkReference file1;
   ChunkReference file2;
 }
@@ -124,7 +124,7 @@ class MergeConflictResultBlock implements IMergeResultBlock {
 // Methods
 //
 
-CandidateThing longest_common_subsequence(List<String> file1, List<String>
+CandidateThing longestCommonSubsequence(List<String> file1, List<String>
     file2) {
   /* Text diff algorithm following Hunt and McIlroy 1976.
    * J. W. Hunt and M. D. McIlroy, An algorithm for differential file
@@ -204,7 +204,7 @@ CandidateThing longest_common_subsequence(List<String> file1, List<String>
 //  throw new UnimplementedError();
 //}
 
-List<CommonOrDifferentThing> diff_comm(List<String> file1, List<String> file2) {
+List<CommonOrDifferentThing> diffComm(List<String> file1, List<String> file2) {
   // We apply the LCS to build a "comm"-style picture of the
   // differences between file1 and file2.
 
@@ -225,7 +225,7 @@ List<CommonOrDifferentThing> diff_comm(List<String> file1, List<String> file2) {
     }
   }
 
-  for (CandidateThing candidate = longest_common_subsequence(file1, file2);
+  for (CandidateThing candidate = longestCommonSubsequence(file1, file2);
       candidate != null; candidate = candidate.chain) {
     CommonOrDifferentThing different = new CommonOrDifferentThing()
         ..file1 = new List<String>()
@@ -257,7 +257,7 @@ List<CommonOrDifferentThing> diff_comm(List<String> file1, List<String> file2) {
   return result.reversed.toList();
 }
 
-List<PatchResult> diff_patch(List<String> file1, List<String> file2) {
+List<PatchResult> diffPatch(List<String> file1, List<String> file2) {
   // We apply the LCD to build a JSON representation of a
   // diff(1)-style patch.
 
@@ -265,7 +265,7 @@ List<PatchResult> diff_patch(List<String> file1, List<String> file2) {
   int tail1 = file1.length;
   int tail2 = file2.length;
 
-  for (CandidateThing candidate = longest_common_subsequence(file1, file2);
+  for (CandidateThing candidate = longestCommonSubsequence(file1, file2);
       candidate != null; candidate = candidate.chain) {
     int mismatchLength1 = tail1 - candidate.file1index - 1;
     int mismatchLength2 = tail2 - candidate.file2index - 1;
@@ -288,7 +288,7 @@ List<PatchResult> diff_patch(List<String> file1, List<String> file2) {
   return result.reversed.toList();
 }
 
-List<PatchResult> strip_patch(List<PatchResult> patch) {
+List<PatchResult> stripPatch(List<PatchResult> patch) {
   // Takes the output of Diff.diff_patch(), and removes
   // information from it. It can still be used by patch(),
   // below, but can no longer be inverted.
@@ -310,7 +310,7 @@ List<PatchResult> strip_patch(List<PatchResult> patch) {
   return newpatch;
 }
 
-void invert_patch(List<PatchResult> patch) {
+void invertPatch(List<PatchResult> patch) {
   // Takes the output of Diff.diff_patch(), and inverts the
   // sense of it, so that it can be applied to file2 to give
   // file1 rather than the other way around.
@@ -358,7 +358,7 @@ List<String> patch(List<String> file, List<PatchResult> patch) {
   return result;
 }
 
-List<String> diff_merge_keepall(List<String> file1, List<String> file2) {
+List<String> diffMergeKeepall(List<String> file1, List<String> file2) {
   // Non-destructively merges two files.
   //
   // This is NOT a three-way merge - content will often be DUPLICATED by this process, eg
@@ -373,7 +373,7 @@ List<String> diff_merge_keepall(List<String> file1, List<String> file2) {
 
   List<String> result = new List<String>();
   int file1CompletedToOffset = 0;
-  List<PatchResult> diffPatches = diff_patch(file1, file2);
+  List<PatchResult> diffPatches = diffPatch(file1, file2);
 
   for (int chunkIndex = 0; chunkIndex < diffPatches.length; chunkIndex++) {
     PatchResult chunk = diffPatches[chunkIndex];
@@ -394,16 +394,16 @@ List<String> diff_merge_keepall(List<String> file1, List<String> file2) {
   return result;
 }
 
-List<diffSet> diff_indices(List<String> file1, List<String> file2) {
+List<DiffSet> diffIndices(List<String> file1, List<String> file2) {
   // We apply the LCS to give a simple representation of the
   // offsets and lengths of mismatched chunks in the input
   // files. This is used by diff3_merge_indices below.
 
-  List<diffSet> result = new List<diffSet>();
+  List<DiffSet> result = new List<DiffSet>();
   int tail1 = file1.length;
   int tail2 = file2.length;
 
-  for (CandidateThing candidate = longest_common_subsequence(file1, file2);
+  for (CandidateThing candidate = longestCommonSubsequence(file1, file2);
       candidate != null; candidate = candidate.chain) {
     int mismatchLength1 = tail1 - candidate.file1index - 1;
     int mismatchLength2 = tail2 - candidate.file2index - 1;
@@ -411,7 +411,7 @@ List<diffSet> diff_indices(List<String> file1, List<String> file2) {
     tail2 = candidate.file2index;
 
     if (mismatchLength1 > 0 || mismatchLength2 > 0) {
-      diffSet diffSetResult = new diffSet();
+      DiffSet diffSetResult = new DiffSet();
       diffSetResult
           ..file1 = (new ChunkReference()
               ..offset = tail1 + 1
@@ -427,7 +427,7 @@ List<diffSet> diff_indices(List<String> file1, List<String> file2) {
 }
 
 // TODO(adam): make private
-void addHunk(diffSet h, Side side, List<Diff3Set> hunks) {
+void addHunk(DiffSet h, Side side, List<Diff3Set> hunks) {
   Diff3Set diff3SetHunk = new Diff3Set();
   diff3SetHunk
       ..side = side
@@ -443,7 +443,7 @@ void addHunk(diffSet h, Side side, List<Diff3Set> hunks) {
 //
 //}
 
-List<Patch3Set> diff3_merge_indices(List<String> a, List<String> o, List<String>
+List<Patch3Set> diff3MergeIndices(List<String> a, List<String> o, List<String>
     b) {
   // Given three files, A, O, and B, where both A and B are
   // independently derived from O, returns a fairly complicated
@@ -457,8 +457,8 @@ List<Patch3Set> diff3_merge_indices(List<String> a, List<String> o, List<String>
   //
   // (http://www.cis.upenn.edu/~bcpierce/papers/diff3-short.pdf)
 
-  List<diffSet> m1 = diff_indices(o, a);
-  List<diffSet> m2 = diff_indices(o, b);
+  List<DiffSet> m1 = diffIndices(o, a);
+  List<DiffSet> m2 = diffIndices(o, b);
 
   List<Diff3Set> hunks = new List<Diff3Set>();
 
@@ -607,7 +607,7 @@ bool isTrueConflict(Patch3Set rec, List<String> a, List<String> b) {
   return false;
 }
 
-List<IMergeResultBlock> diff3_merge(List<String> a, List<String> o, List<String>
+List<IMergeResultBlock> diff3Merge(List<String> a, List<String> o, List<String>
     b, bool excludeFalseConflicts) {
   // Applies the output of Diff.diff3_merge_indices to actually
   // construct the merged file; the returned result alternates
@@ -619,7 +619,7 @@ List<IMergeResultBlock> diff3_merge(List<String> a, List<String> o, List<String>
   files[Side.Old] = o;
   files[Side.Right] = b;
 
-  List<Patch3Set> indices = diff3_merge_indices(a, o, b);
+  List<Patch3Set> indices = diff3MergeIndices(a, o, b);
   List<String> okLines = new List<String>();
 
   for (int i = 0; i < indices.length; i++) {
@@ -655,12 +655,12 @@ List<IMergeResultBlock> diff3_merge(List<String> a, List<String> o, List<String>
   return result;
 }
 
-Diff3DigResult diff3_dig(String ours, String base, String theirs) {
+Diff3DigResult diff3Dig(String ours, String base, String theirs) {
   List<String> a = ours.split("\n");
   List<String> b = theirs.split("\n");
   List<String> o = base.split("\n");
 
-  List<IMergeResultBlock> merger = diff3_merge(a, o, b, false);
+  List<IMergeResultBlock> merger = diff3Merge(a, o, b, false);
 
   bool conflict = false;
   List<String> lines = new List<String>();
@@ -671,7 +671,7 @@ Diff3DigResult diff3_dig(String ours, String base, String theirs) {
     if (item is MergeOKResultBlock) {
       lines.addAll(item.ContentLines);
     } else if (item is MergeConflictResultBlock) {
-      List<CommonOrDifferentThing> inners = diff_comm(item.LeftLines,
+      List<CommonOrDifferentThing> inners = diffComm(item.LeftLines,
           item.RightLines);
       for (int j = 0; j < inners.length; j++) {
         CommonOrDifferentThing inner = inners[j];

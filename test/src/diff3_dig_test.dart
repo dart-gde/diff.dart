@@ -16,7 +16,7 @@ void defineTests() {
       // theirs
       String b = "AA a d c ZZ 11 M z z 99".split(" ").join("\n");
 
-      Diff3DigResult diff3DigResult = diff3_dig(a, o, b);
+      Diff3DigResult diff3DigResult = diff3Dig(a, o, b);
 
       expect(diff3DigResult, isNotNull);
       expect(diff3DigResult.Conflict, isTrue);
