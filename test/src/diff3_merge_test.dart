@@ -16,7 +16,7 @@ void defineTests() {
       // theirs
       List<String> b = "AA a d c ZZ 11 M z z 99".split(" ");
 
-      List<IMergeResultBlock> mergeResultBlocks = diff3Merge(a, o, b, false);
+      List<MergeResultBlock> mergeResultBlocks = diff3Merge(a, o, b, false);
 
       expect(mergeResultBlocks, isNotNull);
       expect(mergeResultBlocks.length, equals(5));

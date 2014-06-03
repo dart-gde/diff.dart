@@ -46,10 +46,10 @@ class DiffSet {
 
 class Side<int> extends Enum<int> implements Comparable<Side<int>> {
   const Side(int val) : super(val);
-  static const Side Conflict = const Side(-1);
-  static const Side Left = const Side(0);
-  static const Side Old = const Side(1);
-  static const Side Right = const Side(2);
+  static const Side CONFLICT = const Side(-1);
+  static const Side LEFT = const Side(0);
+  static const Side OLD = const Side(1);
+  static const Side RIGHT = const Side(2);
 
   @override
   /*int*/ compareTo(Side<int> other) {
@@ -101,15 +101,15 @@ class Diff3DigResult {
 // Merge Result Objects
 //
 
-abstract class IMergeResultBlock {
+abstract class MergeResultBlock {
   // amusingly, I can't figure out anything they have in common.
 }
 
-class MergeOKResultBlock implements IMergeResultBlock {
+class MergeOKResultBlock implements MergeResultBlock {
   List<String> contentLines;
 }
 
-class MergeConflictResultBlock implements IMergeResultBlock {
+class MergeConflictResultBlock implements MergeResultBlock {
   List<String> leftLines;
   int leftIndex;
   List<String> oldLines;
@@ -196,11 +196,6 @@ CandidateThing longestCommonSubsequence(List<String> file1, List<String>
 
   return candidates[candidates.length - 1];
 }
-
-// TODO(adam): make this a closure and do not pass common;
-//void processCommon(ref commonOrDifferentThing common, List<commonOrDifferentThing> result) {
-//  throw new UnimplementedError();
-//}
 
 List<CommonOrDifferentThing> diffComm(List<String> file1, List<String> file2) {
   // We apply the LCS to build a "comm"-style picture of the
@@ -320,11 +315,6 @@ void invertPatch(List<PatchResult> patch) {
   }
 }
 
-// TODO(adam): make this a closure
-//void copyCommon(int targetOffset, ref int commonOffset, string[] file, List<string> result)  {
-//
-//}
-
 List<String> patch(List<String> file, List<PatchResult> patch) {
   // Applies a patch to a file.
   //
@@ -425,7 +415,7 @@ List<DiffSet> diffIndices(List<String> file1, List<String> file2) {
 }
 
 // TODO(adam): make private
-void addHunk(DiffSet h, Side side, List<Diff3Set> hunks) {
+void _addHunk(DiffSet h, Side side, List<Diff3Set> hunks) {
   Diff3Set diff3SetHunk = new Diff3Set();
   diff3SetHunk
       ..side = side
@@ -461,11 +451,11 @@ List<Patch3Set> diff3MergeIndices(List<String> a, List<String> o, List<String>
   List<Diff3Set> hunks = new List<Diff3Set>();
 
   for (int i = 0; i < m1.length; i++) {
-    addHunk(m1[i], Side.Left, hunks);
+    _addHunk(m1[i], Side.LEFT, hunks);
   }
 
   for (int i = 0; i < m2.length; i++) {
-    addHunk(m2[i], Side.Right, hunks);
+    _addHunk(m2[i], Side.RIGHT, hunks);
   }
 
   hunks.sort();
@@ -477,7 +467,7 @@ List<Patch3Set> diff3MergeIndices(List<String> a, List<String> o, List<String>
     if (targetOffset > commonOffset) {
       Patch3Set patch3SetResult = new Patch3Set();
       patch3SetResult
-          ..side = Side.Old
+          ..side = Side.OLD
           ..offset = commonOffset
           ..length = targetOffset - commonOffset;
       result.add(patch3SetResult);
@@ -522,13 +512,13 @@ List<Patch3Set> diff3MergeIndices(List<String> a, List<String> o, List<String>
       // in the regions of o that each side changed, and
       // report appropriate spans for the three sides.
       Map<Side, ConflictRegion> regions = new Map<Side, ConflictRegion>();
-      regions[Side.Left] = new ConflictRegion()
+      regions[Side.LEFT] = new ConflictRegion()
           ..file1RegionStart = a.length
           ..file1RegionEnd = -1
           ..file2RegionStart = o.length
           ..file2RegionEnd = -1;
 
-      regions[Side.Right] = new ConflictRegion()
+      regions[Side.RIGHT] = new ConflictRegion()
           ..file1RegionStart = b.length
           ..file1RegionEnd = -1
           ..file2RegionStart = o.length
@@ -548,18 +538,18 @@ List<Patch3Set> diff3MergeIndices(List<String> a, List<String> o, List<String>
         r.file2RegionEnd = Math.max(oRhs, r.file2RegionEnd);
       }
 
-      int aLhs = regions[Side.Left].file1RegionStart + (regionLhs -
-          regions[Side.Left].file2RegionStart);
-      int aRhs = regions[Side.Left].file1RegionEnd + (regionRhs -
-          regions[Side.Left].file2RegionEnd);
-      int bLhs = regions[Side.Right].file1RegionStart + (regionLhs -
-          regions[Side.Right].file2RegionStart);
-      int bRhs = regions[Side.Right].file1RegionEnd + (regionRhs -
-          regions[Side.Right].file2RegionEnd);
+      int aLhs = regions[Side.LEFT].file1RegionStart + (regionLhs -
+          regions[Side.LEFT].file2RegionStart);
+      int aRhs = regions[Side.LEFT].file1RegionEnd + (regionRhs -
+          regions[Side.LEFT].file2RegionEnd);
+      int bLhs = regions[Side.RIGHT].file1RegionStart + (regionLhs -
+          regions[Side.RIGHT].file2RegionStart);
+      int bRhs = regions[Side.RIGHT].file1RegionEnd + (regionRhs -
+          regions[Side.RIGHT].file2RegionEnd);
 
       Patch3Set patch3SetResult = new Patch3Set();
       patch3SetResult
-          ..side = Side.Conflict
+          ..side = Side.CONFLICT
           ..offset = aLhs
           ..length = aRhs - aLhs
           ..conflictOldOffset = regionLhs
@@ -576,8 +566,7 @@ List<Patch3Set> diff3MergeIndices(List<String> a, List<String> o, List<String>
   return result;
 }
 
-// TODO(adam): make private
-void flushOk(List<String> okLines, List<IMergeResultBlock> result) {
+void _flushOk(List<String> okLines, List<MergeResultBlock> result) {
   if (okLines.length > 0) {
     MergeOKResultBlock okResult = new MergeOKResultBlock();
     okResult.contentLines = okLines.toList();
@@ -587,8 +576,7 @@ void flushOk(List<String> okLines, List<IMergeResultBlock> result) {
   okLines.clear();
 }
 
-// TODO(adam): make private
-bool isTrueConflict(Patch3Set rec, List<String> a, List<String> b) {
+bool _isTrueConflict(Patch3Set rec, List<String> a, List<String> b) {
   if (rec.length != rec.conflictRightLength) {
     return true;
   }
@@ -605,17 +593,17 @@ bool isTrueConflict(Patch3Set rec, List<String> a, List<String> b) {
   return false;
 }
 
-List<IMergeResultBlock> diff3Merge(List<String> a, List<String> o, List<String>
+List<MergeResultBlock> diff3Merge(List<String> a, List<String> o, List<String>
     b, bool excludeFalseConflicts) {
   // Applies the output of Diff.diff3_merge_indices to actually
   // construct the merged file; the returned result alternates
   // between "ok" and "conflict" blocks.
 
-  List<IMergeResultBlock> result = new List<IMergeResultBlock>();
+  List<MergeResultBlock> result = new List<MergeResultBlock>();
   Map<Side, List<String>> files = new Map<Side, List<String>>();
-  files[Side.Left] = a;
-  files[Side.Old] = o;
-  files[Side.Right] = b;
+  files[Side.LEFT] = a;
+  files[Side.OLD] = o;
+  files[Side.RIGHT] = b;
 
   List<Patch3Set> indices = diff3MergeIndices(a, o, b);
   List<String> okLines = new List<String>();
@@ -624,12 +612,12 @@ List<IMergeResultBlock> diff3Merge(List<String> a, List<String> o, List<String>
     Patch3Set x = indices[i];
     Side side = x.side;
 
-    if (side == Side.Conflict) {
-      if (excludeFalseConflicts && !isTrueConflict(x, a, b)) {
+    if (side == Side.CONFLICT) {
+      if (excludeFalseConflicts && !_isTrueConflict(x, a, b)) {
         okLines.addAll(files[0].getRange(x.offset, x.offset + x.length).toList()
             );
       } else {
-        flushOk(okLines, result);
+        _flushOk(okLines, result);
         MergeConflictResultBlock mergeConflictResultBlock =
             new MergeConflictResultBlock();
         mergeConflictResultBlock
@@ -649,7 +637,7 @@ List<IMergeResultBlock> diff3Merge(List<String> a, List<String> o, List<String>
     }
   }
 
-  flushOk(okLines, result);
+  _flushOk(okLines, result);
   return result;
 }
 
@@ -658,13 +646,13 @@ Diff3DigResult diff3Dig(String ours, String base, String theirs) {
   List<String> b = theirs.split("\n");
   List<String> o = base.split("\n");
 
-  List<IMergeResultBlock> merger = diff3Merge(a, o, b, false);
+  List<MergeResultBlock> merger = diff3Merge(a, o, b, false);
 
   bool conflict = false;
   List<String> lines = new List<String>();
 
   for (int i = 0; i < merger.length; i++) {
-    IMergeResultBlock item = merger[i];
+    MergeResultBlock item = merger[i];
 
     if (item is MergeOKResultBlock) {
       lines.addAll(item.contentLines);
