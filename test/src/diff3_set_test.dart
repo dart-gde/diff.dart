@@ -7,16 +7,16 @@ import "package:diff/diff.dart";
 void defineTests() {
   group('diff3Set', () {
     test('sort file1offset not equal', () {
-      List<diff3Set> hunks = new List<diff3Set>();
-      diff3Set s1 = new diff3Set();
-      s1..side = Side.Conflict
+      List<Diff3Set> hunks = new List<Diff3Set>();
+      Diff3Set s1 = new Diff3Set();
+      s1..side = Side.CONFLICT
         ..file1length = 1
         ..file1offset = 1
         ..file2length = 1
         ..file2offset = 1;
 
-      diff3Set s2 = new diff3Set();
-      s2..side = Side.Left
+      Diff3Set s2 = new Diff3Set();
+      s2..side = Side.LEFT
         ..file1length = 2
         ..file1offset = 2
         ..file2length = 2
@@ -33,16 +33,16 @@ void defineTests() {
     });
 
     test('sort file1offset equal, s2 greater then s1', () {
-      List<diff3Set> hunks = new List<diff3Set>();
-      diff3Set s1 = new diff3Set();
-      s1..side = Side.Conflict
+      List<Diff3Set> hunks = new List<Diff3Set>();
+      Diff3Set s1 = new Diff3Set();
+      s1..side = Side.CONFLICT
         ..file1length = 1
         ..file1offset = 1
         ..file2length = 1
         ..file2offset = 1;
 
-      diff3Set s2 = new diff3Set();
-      s2..side = Side.Left
+      Diff3Set s2 = new Diff3Set();
+      s2..side = Side.LEFT
         ..file1length = 2
         ..file1offset = 1
         ..file2length = 2
@@ -58,16 +58,16 @@ void defineTests() {
     });
 
     test('sort file1offset equal, s1 greater then s2', () {
-      List<diff3Set> hunks = new List<diff3Set>();
-      diff3Set s1 = new diff3Set();
-      s1..side = Side.Left
+      List<Diff3Set> hunks = new List<Diff3Set>();
+      Diff3Set s1 = new Diff3Set();
+      s1..side = Side.LEFT
         ..file1length = 1
         ..file1offset = 1
         ..file2length = 1
         ..file2offset = 1;
 
-      diff3Set s2 = new diff3Set();
-      s2..side = Side.Conflict
+      Diff3Set s2 = new Diff3Set();
+      s2..side = Side.CONFLICT
         ..file1length = 2
         ..file1offset = 1
         ..file2length = 2
@@ -83,16 +83,16 @@ void defineTests() {
     });
 
     test('sort file1offset equal, s1 equal s2', () {
-      List<diff3Set> hunks = new List<diff3Set>();
-      diff3Set s1 = new diff3Set();
-      s1..side = Side.Left
+      List<Diff3Set> hunks = new List<Diff3Set>();
+      Diff3Set s1 = new Diff3Set();
+      s1..side = Side.LEFT
         ..file1length = 1
         ..file1offset = 1
         ..file2length = 1
         ..file2offset = 1;
 
-      diff3Set s2 = new diff3Set();
-      s2..side = Side.Left
+      Diff3Set s2 = new Diff3Set();
+      s2..side = Side.LEFT
         ..file1length = 2
         ..file1offset = 1
         ..file2length = 2
@@ -108,23 +108,23 @@ void defineTests() {
     });
 
     test('sort file1offset equal, sort multiple by Side', () {
-      List<diff3Set> hunks = new List<diff3Set>();
-      diff3Set s1 = new diff3Set();
-      s1..side = Side.Conflict
+      List<Diff3Set> hunks = new List<Diff3Set>();
+      Diff3Set s1 = new Diff3Set();
+      s1..side = Side.CONFLICT
         ..file1length = 1
         ..file1offset = 1
         ..file2length = 1
         ..file2offset = 1;
 
-      diff3Set s2 = new diff3Set();
-      s2..side = Side.Old
+      Diff3Set s2 = new Diff3Set();
+      s2..side = Side.OLD
         ..file1length = 2
         ..file1offset = 1
         ..file2length = 2
         ..file2offset = 2;
 
-      diff3Set s3 = new diff3Set();
-      s3..side = Side.Right
+      Diff3Set s3 = new Diff3Set();
+      s3..side = Side.RIGHT
         ..file1length = 2
         ..file1offset = 1
         ..file2length = 2
