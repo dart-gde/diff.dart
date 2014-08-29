@@ -1,5 +1,5 @@
 name: diff
-version: 0.1.1-dev
+version: 0.1.1
 authors:
 - Adam Singer <financeCoding@gmail.com>
 description: A diff library
