@@ -1,6 +1,6 @@
 library diff3_merge_test;
 
-import "package:unittest/unittest.dart";
+import "package:test/test.dart";
 
 import "package:diff/diff.dart";
 

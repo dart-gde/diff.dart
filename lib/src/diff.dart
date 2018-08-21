@@ -44,7 +44,7 @@ class DiffSet {
   ChunkReference file2;
 }
 
-class Side<int> extends Enum<int> implements Comparable<Side<int>> {
+class Side extends Enum<int> implements Comparable<Side> {
   const Side(int val) : super(val);
   static const Side CONFLICT = const Side(-1);
   static const Side LEFT = const Side(0);
@@ -52,8 +52,7 @@ class Side<int> extends Enum<int> implements Comparable<Side<int>> {
   static const Side RIGHT = const Side(2);
 
   @override
-  /*int*/ compareTo(Side<int> other) {
-    // TODO(adam): figure out why dart editor thinks int is a warning?
+  int compareTo(Side other) {
     return value.compareTo(other.value);
   }
 }
@@ -414,7 +413,6 @@ List<DiffSet> diffIndices(List<String> file1, List<String> file2) {
   return result.reversed.toList();
 }
 
-// TODO(adam): make private
 void _addHunk(DiffSet h, Side side, List<Diff3Set> hunks) {
   Diff3Set diff3SetHunk = new Diff3Set();
   diff3SetHunk
